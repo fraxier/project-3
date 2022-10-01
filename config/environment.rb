@@ -1,0 +1,5 @@
+require 'nokogiri'
+require 'open-uri'
+require 'pry'
+require_relative '../classes/GameSearchResult'
+require_relative '../classes/Tag'
