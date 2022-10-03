@@ -1,5 +1,8 @@
 require 'nokogiri'
 require 'open-uri'
+require 'colorize'
 require 'pry'
 require_relative '../classes/GameSearchResult'
 require_relative '../classes/Tag'
+require_relative '../classes/CLI'
+require_relative '../classes/StorePageController'
