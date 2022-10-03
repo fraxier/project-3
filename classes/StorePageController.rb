@@ -1,6 +1,6 @@
 class StorePageController
   @base_url = 'https://store.steampowered.com/search/?'
-  attr_reader :term
+  attr_writer :term
 
   def initialize
     initialize_options
@@ -14,9 +14,9 @@ class StorePageController
     @options = {
       # 'term': 'term='
       # 'top sellers': 'filter=topsellers',
+      # 'add tag(s)': 'tags=[tagid]',
       'hide free to play games': 'hidef2p=1',
-      'show specials only': 'specials=1',
-      'add tag(s)': 'tags=[tagid]'
+      'show specials only': 'specials=1'
     }
   end
 
@@ -62,12 +62,10 @@ class StorePageController
 
   def choose_sort_by(sort)
     @chosen_sort_by = @sort_by[sort]
-    CLI.print_msg("sorting by #{sort}")
   end
 
   def add_option(option)
     @chosen_options << @options[option]
-    CLI.print_msg("added #{option} to search options")
   end
 
   def clear_options
