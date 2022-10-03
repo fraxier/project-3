@@ -32,6 +32,13 @@ doc = Nokogiri::HTML5(URI.open(link))
 
 include Remedy
 
-#RemedyCli.new([]).listen
+
+games = SteamStoreScraper.scrape_page_for_games 'https://store.steampowered.com/search/?filter=topsellers'
+arr = []
+50.times do |i|
+  arr << "#{i + 1} ==> #{games[i].pretty_string}"
+end
+
+RemedyCli.new(arr).listen
 
 binding.pry

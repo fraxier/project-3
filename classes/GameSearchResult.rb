@@ -7,19 +7,27 @@ class GameSearchResult
     @is_discounted = !html.at_css('.search_price.discounted').nil?
     @release_date = html.at_css('.search_released').text
     parse_prices html
-    prase_sentiment html
+    parse_sentiment html
+  end
+  
+  def pretty_string
+    "|#{@name}| - |#{@price}| - |#{@sentiment}|"
   end
   
   private
   
   def parse_sentiment(html)
     review_summary = html.at_css('.search_review_summary')
-    return if review_summary.nil?
+    if review_summary.nil?
+      @sentiment = 'No sentiment found'
+      return
+    end
     
     @sentiment = review_summary.attributes['data-tooltip-html'].value
     match = @sentiment.match(/^[a-zA-Z ]*/)
-    @sentiment["#{match}"] = "#{match} - "
+    @sentiment["#{match}"] = "#{match}: "
     @sentiment = @sentiment.gsub('<br>', '') unless @sentiment.nil?
+    @sentiment = "#{@sentiment.slice!(0,150)}..." if @sentiment.length > 155
   end
 
   def parse_prices(html)
