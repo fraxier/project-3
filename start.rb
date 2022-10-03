@@ -22,8 +22,16 @@ require_relative './config/environment'
 
 # STEAM URL Manipulator
 
-cli = CLI.new
+# cli = CLI.new
 
-cli.begin_loop
+# cli.begin_loop
+
+link = 'https://marvelvscapcom.fandom.com/wiki/Apocalypse'
+
+doc = Nokogiri::HTML5(URI.open(link))
+
+include Remedy
+
+#RemedyCli.new([]).listen
 
 binding.pry

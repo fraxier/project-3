@@ -1,3 +1,3 @@
 class Game
-  attr_accessor :name, :discount, :discount_price, :price, :href
+  attr_accessor :name, :price, :href, timestamps,
 end

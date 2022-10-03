@@ -21,6 +21,7 @@ class CLI
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize
   def parse_input(command)
     case command
     when 'what'
@@ -53,6 +54,7 @@ class CLI
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize
 
   def what
     print_msg 'This is a CLI that scrapes the Steam store search page!'

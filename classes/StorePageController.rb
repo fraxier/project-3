@@ -12,26 +12,41 @@ class StorePageController
 
   def initialize_options
     @options = {
-      'top sellers': 'filter=topsellers',
-      'hide f2p': 'hidef2p=1',
+      # 'term': 'term='
+      # 'top sellers': 'filter=topsellers',
+      'hide free to play games': 'hidef2p=1',
       'show specials only': 'specials=1',
-      '[tag]': 'tags=[tagid]'
+      'add tag(s)': 'tags=[tagid]'
     }
   end
 
   def initialize_sort_by
     @sort_by = {
       'relevance': '',
-      'release date': 'sort_by=Released_DESC',
-      'name ascending': 'sort_by=Name_ASC',
+      'release date (desc)': 'sort_by=Released_DESC',
+      'name (asc)': 'sort_by=Name_ASC',
       'lowest price': 'sort_by=Price_ASC',
       'highest price': 'sort_by=Price_DESC',
-      'user reviews': 'sort_by=Reviews_DESC',
-      'steam deck compatibility review date': 'sort_by=DeckCompatDate_DESC'
+      'user reviews (desc)': 'sort_by=Reviews_DESC',
+      'steam deck compatibility review date (desc)': 'sort_by=DeckCompatDate_DESC'
     }
   end
 
-  def generate_url(options, sort_bys); end
+  def generate_url(options, sort_bys)
+    url = @base_url
+    url = build_options url
+    url = "#{url}&#{@chosen_sort_by}"
+  end
+
+  def build_options(url)
+    if @term == '' && @chosen_options.length < 1
+      url = "#{url}&filter=topsellers"
+    else
+      url = "#{url}&term=#{@term}" unless @term == ''
+      @chosen_options.each { |option| url = "#{url}&#{option}" }
+    end
+    url
+  end
 
   def keys_of_options
     @options.keys
