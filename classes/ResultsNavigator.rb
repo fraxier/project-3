@@ -1,0 +1,2 @@
+class ResultsNavigator
+end

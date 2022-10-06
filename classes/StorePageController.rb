@@ -1,5 +1,4 @@
 class StorePageController
-  @base_url = 'https://store.steampowered.com/search/?'
   attr_writer :term
 
   def initialize
@@ -8,13 +7,14 @@ class StorePageController
     @chosen_options = []
     @chosen_sort_by = ''
     @term = ''
+    @base_url = 'https://store.steampowered.com/search/?category1=998&'
   end
 
   def initialize_options
     @options = {
       # 'term': 'term='
-      # 'top sellers': 'filter=topsellers',
       # 'add tag(s)': 'tags=[tagid]',
+      'top sellers (this overrides all other options)': 'filter=topsellers', # always make this the first option
       'hide free to play games': 'hidef2p=1',
       'show specials only': 'specials=1'
     }
@@ -32,18 +32,18 @@ class StorePageController
     }
   end
 
-  def generate_url(options, sort_bys)
+  def generate_url
     url = @base_url
-    url = build_options url
-    url = "#{url}&#{@chosen_sort_by}"
+    url = build_options @base_url
+    "#{url}&#{@chosen_sort_by}"
   end
 
   def build_options(url)
     if @term == '' && @chosen_options.length < 1
-      url = "#{url}&filter=topsellers"
+      url = "#{url}filter=topsellers&"
     else
-      url = "#{url}&term=#{@term}" unless @term == ''
-      @chosen_options.each { |option| url = "#{url}&#{option}" }
+      url = "#{url}term=#{@term.gsub(' ', '+')}&" unless @term == ''
+      @chosen_options.each { |option| url = "#{url}#{option}&" }
     end
     url
   end
@@ -52,8 +52,18 @@ class StorePageController
     @options.keys
   end
 
-  def keys_of_sort_by
-    @sort_by.keys
+  def keys_of_sort_by(str_flag = false)
+    return @sort_by.keys unless str_flag
+
+    @sort_by.keys.map(&:to_s)
+  end
+
+  def keys_of_sort_by_with_index_and_string
+    arr = []
+    keys_of_sort_by(true).each_with_index do |key, i|
+      arr << "#{i + 1} => #{key}"
+    end
+    arr
   end
 
   def term?

@@ -11,7 +11,7 @@ class GameSearchResult
   end
 
   def pretty_string
-    "|#{@name}| - |#{@price}| - |#{@sentiment}|"
+    "|#{@name}| - |#{@price}|"
   end
 
   private
