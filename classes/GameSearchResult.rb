@@ -1,5 +1,5 @@
 class GameSearchResult
-  attr_accessor :name, :href, :price, :is_discounted, :discounted_from, :release_date, :sentiment
+  attr_accessor :name, :href, :price, :is_discounted, :discounted_from, :release_date, :sentiment, :desc, :devs
 
   def initialize(html)
     @href = html.attributes['href'].value
@@ -12,6 +12,12 @@ class GameSearchResult
 
   def pretty_string
     "|#{@name}| - |#{@price}|"
+  end
+
+  def print_devs
+    devs.map do |dev|
+      "#{dev.name} - #{dev.link}"
+    end
   end
 
   private

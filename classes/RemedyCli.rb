@@ -1,5 +1,3 @@
-# rubocop:disable Metrics/MethodLength
-
 class RemedyCli
   attr_accessor :header, :footer, :search_results
 
@@ -7,11 +5,7 @@ class RemedyCli
 
   def initialize
     @viewport = Viewport.new
-
-    @index = 0
-    @max_num_viewable = 25
-    @start = 0
-    @end = @start + @max_num_viewable - 1
+    @search_results = []
   end
 
   # Provided from Remedy example
@@ -26,73 +20,44 @@ class RemedyCli
   def listen
     safe_setup
     @interaction = Interaction.new
-    welcome_menu
     searcher = Searcher.new self
+    welcome_screen # draw it once here to show something to user before needing keyboard input
     @interaction.loop do |key|
       @interaction.quit! if key == 'q'
-      searcher.construct_search
+      searcher.construct_search if key == 's'
+      navigate_results if key == 'r'
+      welcome_screen # draw it again once search is complete
     end
   end
 
-  # TODO: create the actual menu logic
-  def welcome_menu
+  def welcome_screen
     quick_draw(
-      msg: 'Welcome to the Steam Store CLI (unofficial)!',
+      msg: [
+        'Welcome to the Steam Store CLI (unofficial)!',
+        'Perform a search: Press S',
+        'Navigate past results: Press R',
+        'Exit program: Press Q'
+      ],
       header_msg: "The time is: #{Time.now}",
-      footer_msg: "Screen size: #{Console.size} You pressed: #{@last_key}"
+      footer_msg: [
+        "Screen size: #{Console.size}",
+        "Search Results: #{@search_results.length} results"
+      ]
     )
   end
 
   def navigate_results
-    looping = true
-    while looping
-      draw_arr_items
-      key = chomp_key
-      index_down if key.to_s == 'up'
-      index_up if key.to_s == 'down'
+    if @search_results.empty?
+      quick_draw(msg:
+      [
+        'There are no previous search results to navigate through'.colorize(:red),
+        'Please press any key to continue...'.colorize(:yellow)
+      ])
+      chomp_key
+      return
     end
-  end
-
-  def index_up
-    if @index < @search_results.length - 1
-      @index += 1
-      if @index == @end + 1 && @end < @search_results.length - 1
-        @end += 1
-        @start += 1
-      end
-    end
-  end
-
-  def index_down
-    if @index.positive?
-      @index -= 1
-      if @index == @start && @start.positive?
-        @end -= 1
-        @start -= 1
-      end
-    end
-  end
-
-  # rubocop:disable Style/For
-  def draw_arr_items
-    part = Partial.new
-    for i in @start..@end do
-      game = @search_results[i]
-      part << if i == @index
-                game.pretty_string.colorize(:blue)
-              else
-                game.pretty_string.colorize(:red)
-              end
-    end
-    update_header_footer
-    draw part
-  end
-  # rubocop:enable Style/For
-
-  def quick_draw(msg:, header_msg: '', footer_msg: '')
-    new_header [header_msg].flatten
-    new_footer [footer_msg].flatten
-    draw new_part([msg].flatten)
+    navigator = ResultsNavigator.new self
+    navigator.navigate
   end
 
   def chomp_key
@@ -101,11 +66,58 @@ class RemedyCli
     key
   end
 
-  private
+  def show_quit_screen
+    last_header = @header.dup
+    last_footer = @footer.dup
+    last_part = @last_part
+
+    quick_draw(msg: 'Are you sure you want to quit? y/n'.colorize(:red))
+    key = @interaction.get_key
+    if key == 'y'
+      
+    end
+  end
+
+  def update_arr_draw(start, last, index, part)
+    new_header [
+      'Viewing results from search',
+      'Press Enter on a result to find more information about it'
+    ]
+    new_footer [
+      "There are #{@search_results.length} results, viewing #{start + 1} - #{last + 1}",
+      "Current index: #{index}",
+      'Press Q to quit'.colorize(:red)
+    ]
+    draw part
+  end
 
   def draw(part)
+    @last_part = part
     @viewport.draw part, Size([0, 0]), @header, @footer
   end
+
+  def draw_game_page(game)
+    quick_draw(
+      header_msg: "Extra details for #{game.name}",
+      footer_msg: 'Press B to go back to the results page',
+      msg: [
+        game.desc.to_s.colorize(:blue),
+        "Release Date: #{game.release_date}",
+        "Reviews: #{game.sentiment}",
+        'Developed by:',
+        game.print_devs.colorize(:blue)
+      ]
+    )
+    chomp_key
+  end
+
+  def quick_draw(msg:, header_msg: '', footer_msg: '')
+    new_header [header_msg].flatten unless header_msg == ''
+    new_footer [footer_msg].flatten unless footer_msg == ''
+    draw new_part([msg].flatten)
+  end
+
+  private
 
   def new_part(msgs_arr)
     part = Partial.new
@@ -122,18 +134,4 @@ class RemedyCli
     @footer = Partial.new
     msgs_arr.each { |msg| @footer << msg.colorize(:yellow) }
   end
-
-  def update_header_footer
-    new_header [
-      'Viewing results from search',
-      'Press Enter on a result to find more information about it'
-    ]
-    new_footer [
-      "There are #{@search_results.length} results, viewing #{@start + 1} - #{@end + 1}",
-      "Current index: #{@index}",
-      'Press Q to quit'
-    ]
-  end
 end
-
-# rubocop:enable Metrics/MethodLength

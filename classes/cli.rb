@@ -39,14 +39,14 @@ class Cli
 
   def search
     url = @controller.generate_url
-    @search_results = Scraper.scrape_page_for_games url
+    @games = Scraper.scrape_page_for_games url
 
     print_results
   end
 
   def print_results(num = 0)
-    num = @search_results.length if num < 1
-    @search_results.slice(0, num).each do |result|
+    num = @games.length if num < 1
+    @games.slice(0, num).each do |result|
       puts "#{result.name} - #{result.price} - #{result.sentiment}"
     end
 
