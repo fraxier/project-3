@@ -23,6 +23,7 @@ class Searcher
   end
 
   def enter_search_term
+    @cli.chomping_term = true
     term = ''
     draw_search_term_step(term, false)
     looping = true
@@ -42,6 +43,7 @@ class Searcher
     end
     @controller.term = term
     draw_search_term_step(term, true)
+    @cli.chomping_term = false
   end
 
   def draw_search_term_step(term, done)
@@ -139,6 +141,7 @@ class Searcher
 
   def do_search
     url = @controller.generate_url
+    
     @cli.search_results = SteamStoreScraper.scrape_page_for_games url
     @cli.navigate_results
   end

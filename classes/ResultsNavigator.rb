@@ -26,14 +26,24 @@ class ResultsNavigator
 
   def enter_game
     game = @games[@index]
-    SteamStoreScraper.scrape_game_page game
+    good = SteamStoreScraper.scrape_game_page game
+    if good.nil?
+      @cli.quick_draw(
+        header_msg: 'Error - Unable to load page',
+        msg: 'Possible age check required to load page',
+        footer_msg: 'Press any key to go back to page results...'
+      )
+      @cli.chomp_key
+    else
+      navigate_game_page(game)
+    end
   end
 
   def navigate_game_page(game)
     looping = true
     while looping
       @cli.draw_game_page game
-      key = chomp_key
+      key = @cli.chomp_key
       looping = false if key == 'b'
       # save_game if key == 's'
     end

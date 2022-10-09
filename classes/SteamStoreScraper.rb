@@ -16,6 +16,8 @@ class SteamStoreScraper
     doc = Nokogiri::HTML5(URI.open(game.href))
 
     right_col = doc.at_css('#game_highlights .rightcol')
+    return nil if right_col.nil?
+
     game.desc = right_col.at_css('.game_description_snippet')
     game.desc = game.desc.text.strip unless game.desc.nil?
     developers = right_col.css('#developers_list a')

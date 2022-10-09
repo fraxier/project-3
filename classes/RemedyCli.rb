@@ -1,5 +1,5 @@
 class RemedyCli
-  attr_accessor :header, :footer, :search_results
+  attr_accessor :header, :footer, :search_results, :chomping_term
 
   include Remedy
 
@@ -23,7 +23,7 @@ class RemedyCli
     searcher = Searcher.new self
     welcome_screen # draw it once here to show something to user before needing keyboard input
     @interaction.loop do |key|
-      @interaction.quit! if key == 'q'
+      show_quit_screen if key == 'q'
       searcher.construct_search if key == 's'
       navigate_results if key == 'r'
       welcome_screen # draw it again once search is complete
@@ -62,20 +62,25 @@ class RemedyCli
 
   def chomp_key
     key = @interaction.get_key
-    @interaction.quit! if key == 'q'
+    show_quit_screen if key == :q && !chomping_term
     key
   end
 
   def show_quit_screen
-    last_header = @header.dup
-    last_footer = @footer.dup
-    last_part = @last_part
+    last_header = @header.lines.dup
+    last_footer = @footer.lines.dup
+    last_part = @last_part.lines.dup
 
     quick_draw(msg: 'Are you sure you want to quit? y/n'.colorize(:red))
     key = @interaction.get_key
     if key == 'y'
-      
+      ANSI.cursor.home!
+      ANSI.command.clear_down!
+      ANSI.cursor.show!
+      puts 'See ya later aligator!'
+      exit
     end
+    quick_draw(header_msg: last_header, msg: last_part, footer_msg: last_footer)
   end
 
   def update_arr_draw(start, last, index, part)
@@ -105,7 +110,7 @@ class RemedyCli
         "Release Date: #{game.release_date}",
         "Reviews: #{game.sentiment}",
         'Developed by:',
-        game.print_devs.colorize(:blue)
+        game.print_devs.map { |dev| dev.colorize(:blue) }
       ]
     )
     chomp_key
