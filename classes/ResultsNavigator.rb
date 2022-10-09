@@ -34,6 +34,7 @@ class ResultsNavigator
         msg: 'Possible age check required to load page',
         footer_msg: 'Press any key to go back to page results...'
       )
+      @cli.chomp_key
     else
       navigate_game_page(game)
     end
