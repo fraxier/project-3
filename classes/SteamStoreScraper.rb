@@ -22,7 +22,7 @@ class SteamStoreScraper
     game.desc = game.desc.text.strip unless game.desc.nil?
     developers = right_col.css('#developers_list a')
     game.devs = developers.map do |dev|
-      developer = Developer.new(link: dev.attributes['href'], name: dev.text)
+      Developer.new(link: dev.attributes['href'], name: dev.text)
     end
     game
     # rows = right_col.css('.dev_row')

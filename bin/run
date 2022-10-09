@@ -1,4 +1,6 @@
-require_relative './config/environment'
+#!/usr/bin/env ruby
+
+require_relative '../config/environment'
 
 # steam_url = 'https://store.steampowered.com/search/?filter=topsellers'
 # steam_tags_url = 'https://store.steampowered.com/tag/browse/'
