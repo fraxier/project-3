@@ -4,10 +4,14 @@ class StorePageController
   def initialize
     initialize_options
     initialize_sort_by
+    clear_search
+    @base_url = 'https://store.steampowered.com/search/?category1=998&'
+  end
+
+  def clear_search
     @chosen_options = []
     @chosen_sort_by = ''
     @term = ''
-    @base_url = 'https://store.steampowered.com/search/?category1=998&'
   end
 
   def initialize_options

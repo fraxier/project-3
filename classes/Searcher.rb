@@ -8,6 +8,7 @@ class Searcher
 
   def construct_search
     @query = []
+    @controller.clear_search
     top_seller = choose_options
     enter_search_term unless top_seller
     choose_sort_by
