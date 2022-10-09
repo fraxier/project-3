@@ -21,6 +21,7 @@ class ResultsNavigator
       index_down if key.to_s == 'up'
       index_up if key.to_s == 'down'
       enter_game if key.to_s == 'control_m'
+      looping = false if key == :b
     end
   end
 
@@ -33,7 +34,6 @@ class ResultsNavigator
         msg: 'Possible age check required to load page',
         footer_msg: 'Press any key to go back to page results...'
       )
-      @cli.chomp_key
     else
       navigate_game_page(game)
     end

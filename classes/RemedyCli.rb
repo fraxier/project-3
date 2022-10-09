@@ -91,7 +91,7 @@ class RemedyCli
     new_footer [
       "There are #{@search_results.length} results, viewing #{start + 1} - #{last + 1}",
       "Current index: #{index}",
-      'Press Q to quit'.colorize(:red)
+      'Press B to quit navigating these search results'.colorize(:red)
     ]
     draw part
   end
